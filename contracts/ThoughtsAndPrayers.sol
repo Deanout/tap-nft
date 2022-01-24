@@ -10,11 +10,16 @@ import "@openzeppelin/contracts@4.4.2/utils/Counters.sol";
 contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
 
+    uint14 totalSupply;
+
     Counters.Counter private _tokenIdCounter;
 
     mapping(string => uint8) existingURIs;
 
-    constructor() ERC721("ThoughtsAndPrayers", "TAP") {}
+    constructor() ERC721("ThoughtsAndPrayers", "TAP") {
+        totalSupply = 9999;
+        _tokenIdCounter = new Counters.Counter(0);
+    }
 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://";
@@ -50,6 +55,7 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
         payable
         returns (uint256)
     {
+        require(this.count() < this.totalSupply());
         require(
             existingURIs[metadataURI] != 1,
             "This NFT Has Already Been Minted!"
@@ -68,5 +74,9 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
 
     function isContentOwned(string memory uri) public view returns (bool) {
         return existingURIs[uri] == 1;
+    }
+
+    function count() public view returns (uint14) {
+        return _tokenIdCounter.current();
     }
 }
