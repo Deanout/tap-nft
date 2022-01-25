@@ -32,6 +32,7 @@ export interface ThoughtsAndPrayersInterface extends utils.Interface {
     "ownerOf(uint256)": FunctionFragment;
     "payToMint(address,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeMint(address,string)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -73,6 +74,10 @@ export interface ThoughtsAndPrayersInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "royaltyInfo",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeMint",
@@ -125,6 +130,10 @@ export interface ThoughtsAndPrayersInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "payToMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "royaltyInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
@@ -263,6 +272,14 @@ export interface ThoughtsAndPrayers extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    royaltyInfo(
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
+
     safeMint(
       to: string,
       uri: string,
@@ -354,6 +371,14 @@ export interface ThoughtsAndPrayers extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  royaltyInfo(
+    _tokenId: BigNumberish,
+    _salePrice: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  >;
+
   safeMint(
     to: string,
     uri: string,
@@ -439,6 +464,14 @@ export interface ThoughtsAndPrayers extends BaseContract {
     ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    royaltyInfo(
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeMint(to: string, uri: string, overrides?: CallOverrides): Promise<void>;
 
@@ -572,6 +605,12 @@ export interface ThoughtsAndPrayers extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    royaltyInfo(
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     safeMint(
       to: string,
       uri: string,
@@ -671,6 +710,12 @@ export interface ThoughtsAndPrayers extends BaseContract {
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    royaltyInfo(
+      _tokenId: BigNumberish,
+      _salePrice: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeMint(

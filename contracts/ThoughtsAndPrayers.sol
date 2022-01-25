@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @custom:security-contact dehartdean@gmail.com
-contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
+contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, IERC2981, Ownable {
     using Counters for Counters.Counter;
 
     uint16 totalSupply;
@@ -78,5 +78,22 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
 
     function count() public view returns (uint16) {
         return uint16(_tokenIdCounter.current());
+    }
+
+    /// @notice Called with the sale price to determine how much royalty
+    //          is owed and to whom.
+    /// @param _tokenId - the NFT asset queried for royalty information
+    /// @param _salePrice - the sale price of the NFT asset specified by _tokenId
+    /// @return receiver - address of who should be sent the royalty payment
+    /// @return royaltyAmount - the royalty payment amount for _salePrice
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        override
+        returns (address receiver, uint256 royaltyAmount)
+    {
+        uint256 royalty = (_salePrice * 5) / 100;
+
+        return (address(this), royalty);
     }
 }
