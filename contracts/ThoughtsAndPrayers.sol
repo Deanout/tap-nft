@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts@4.4.2/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts@4.4.2/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts@4.4.2/access/Ownable.sol";
-import "@openzeppelin/contracts@4.4.2/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @custom:security-contact dehartdean@gmail.com
 contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
 
-    uint14 totalSupply;
+    uint16 totalSupply;
 
     Counters.Counter private _tokenIdCounter;
 
@@ -18,7 +19,6 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
 
     constructor() ERC721("ThoughtsAndPrayers", "TAP") {
         totalSupply = 9999;
-        _tokenIdCounter = new Counters.Counter(0);
     }
 
     function _baseURI() internal pure override returns (string memory) {
@@ -26,7 +26,7 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
     }
 
     function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
+        uint16 tokenId = uint16(_tokenIdCounter.current());
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
@@ -55,19 +55,19 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
         payable
         returns (uint256)
     {
-        require(this.count() < this.totalSupply());
+        require(this.count() < totalSupply);
         require(
-            existingURIs[metadataURI] != 1,
+            existingURIs[metaDataURI] != 1,
             "This NFT Has Already Been Minted!"
         );
         require(msg.value >= 0.05 ether, "You Must Pay At Least 0.05 Ether!");
 
         uint256 newItemId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        existingURIs[metadataURI] = 1;
+        existingURIs[metaDataURI] = 1;
         _mint(recipient, newItemId);
 
-        _setTokenURI(newItemId, metadataURI);
+        _setTokenURI(newItemId, metaDataURI);
 
         return newItemId;
     }
@@ -76,7 +76,7 @@ contract ThoughtsAndPrayers is ERC721, ERC721URIStorage, Ownable {
         return existingURIs[uri] == 1;
     }
 
-    function count() public view returns (uint14) {
-        return _tokenIdCounter.current();
+    function count() public view returns (uint16) {
+        return uint16(_tokenIdCounter.current());
     }
 }
